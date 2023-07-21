@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: #17171a;
+  color: white;
+}
+
+.step-form-div {
+  @apply carousel-item w-full flex flex-col gap-2;
+}
+
+.next-btn {
+  @apply btn btn-sm w-2/4 mx-auto;
+}
