@@ -4,15 +4,42 @@ import SortAsc from "../assets/sortdown.png";
 import SortDesc from "../assets/sortup.png";
 
 const isNameOrAreaProperty = (property) => {
-  return property === "Name" || property === "Area";
+  // propertyNames.forEach((name) => {
+
+  // })
+
+  // if (propertyNames.includes(property)) {
+  //   return true;
+  // }
+
+  return propertyNames.includes(property);
+
+  // return property === "Name" || property === "Area" || property === "Lat";
+  // return true;
+};
+
+const generateObj = () => {
+  const obj = {};
+  propertyNames.forEach((name) => {
+    obj[name] = "";
+  });
+
+  return obj;
 };
 
 const Table = ({ hospitalsToShow, setHospitalsToShow, currentHospitals }) => {
-  const [sortState, setSortState] = useState({
-    Name: "",
-    Area: "",
-  });
+  // const [sortState, setSortState] = useState({
+  //   Name: "",
+  //   Area: "",
+  //   Lat: "",
+  // });
+  const [sortState, setSortState] = useState(generateObj());
+  console.log(sortState);
   const [currentPropertyToSort, setCurrentPropertySort] = useState("");
+
+  // const sortedHospitals = () => {
+
+  // }
 
   const handleSorting = (propertyName) => {
     if (isNameOrAreaProperty(propertyName)) {

@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Input from "../components/Input";
 import { isEmail } from "../utils";
+import Step1 from "../components/Step1";
+import Step2 from "../components/Step2";
+import Step3 from "../components/Step3";
 
 const Onboarding = () => {
   const [userData, setUserData] = useState({
@@ -17,38 +20,10 @@ const Onboarding = () => {
   });
   const [error, setError] = useState("");
   const [isChecked, setIsChecked] = useState(false);
-
-  const isFirstStepDone = () => {
-    const { name, email, phoneNumber } = userData;
-    if (name && email && phoneNumber && isEmail(email)) {
-      return true;
-    }
-    return false;
-  };
-
-  const isSecondStepDone = () => {
-    const { allergies, currentMedications, medicalConditions } = userData;
-    if (
-      isFirstStepDone() &&
-      allergies &&
-      currentMedications &&
-      medicalConditions
-    ) {
-      return true;
-    }
-    return false;
-  };
-
-  const isThirdStepDone = () => {
-    const { emergencyContact1 } = userData;
-    if (isSecondStepDone() && emergencyContact1) {
-      return true;
-    }
-    return false;
-  };
+  const [step, setStep] = useState(1);
 
   const isInfoValid = () => {
-    if (isThirdStepDone && isChecked) {
+    if (step === 4 && isChecked) {
       return true;
     }
 
@@ -99,6 +74,7 @@ const Onboarding = () => {
                   onClick={() => {
                     setIsInfoSaved("");
                     setIsChecked(false);
+                    setStep(1);
                   }}
                 >
                   Edit here.
@@ -106,103 +82,28 @@ const Onboarding = () => {
               </p>
             )}
             <div className="carousel w-full flex items-center flex-cols">
-              <div id="item1" className="step-form-div">
-                <Input
-                  type="text"
-                  placeholder="Name*"
-                  required={true}
-                  onChange={onChangeHandler}
-                  name="name"
-                  value={userData.name}
+              {step === 1 && (
+                <Step1
+                  onChangeHandler={onChangeHandler}
+                  userData={userData}
+                  setStep={setStep}
                 />
-                <Input
-                  type="email"
-                  placeholder="Email*"
-                  required={true}
-                  onChange={onChangeHandler}
-                  name="email"
-                  value={userData.email}
-                />
-                <Input
-                  type="number"
-                  placeholder="Phone Number*"
-                  required={true}
-                  onChange={onChangeHandler}
-                  name="phoneNumber"
-                  value={userData.phoneNumber}
-                />
-                {isFirstStepDone() && (
-                  <a href="#item2" className="next-btn">
-                    Next
-                  </a>
-                )}
-              </div>
-              {isFirstStepDone() && (
-                <div id="item2" className="step-form-div">
-                  <Input
-                    type="text"
-                    placeholder="Allergies*"
-                    required={true}
-                    onChange={onChangeHandler}
-                    name="allergies"
-                    value={userData.allergies}
-                  />
-                  <Input
-                    type="text"
-                    placeholder="Current Medications*"
-                    required={true}
-                    onChange={onChangeHandler}
-                    name="currentMedications"
-                    value={userData.currentMedications}
-                  />
-                  <Input
-                    type="text"
-                    placeholder="Medical Conditions*"
-                    required={true}
-                    onChange={onChangeHandler}
-                    name="medicalConditions"
-                    value={userData.medicalConditions}
-                  />
-
-                  {isSecondStepDone() && (
-                    <a href="#item3" className="next-btn">
-                      Next
-                    </a>
-                  )}
-                </div>
               )}
-              {isSecondStepDone() && (
-                <div id="item3" className="step-form-div">
-                  <Input
-                    type="number"
-                    placeholder="Emergency Contact #1*"
-                    required={true}
-                    onChange={onChangeHandler}
-                    name="emergencyContact1"
-                    value={userData.emergencyContact1}
-                  />
-                  <Input
-                    type="number"
-                    placeholder="Emergency Contact #2"
-                    onChange={onChangeHandler}
-                    name="emergencyContact2"
-                    value={userData.emergencyContact2}
-                  />
-                  <Input
-                    type="number"
-                    placeholder="Emergency Contact #3"
-                    onChange={onChangeHandler}
-                    name="emergencyContact3"
-                    value={userData.emergencyContact3}
-                  />
-                  {isThirdStepDone() && (
-                    <a href="#item4" className="next-btn">
-                      Next
-                    </a>
-                  )}
-                </div>
+              {step === 2 && (
+                <Step2
+                  onChangeHandler={onChangeHandler}
+                  userData={userData}
+                  setStep={setStep}
+                />
               )}
-              {isThirdStepDone() && (
+              {step === 3 && (
+                <Step3
+                  onChangeHandler={onChangeHandler}
+                  userData={userData}
+                  setStep={setStep}
+                />
+              )}
+              {step === 4 && (
                 <div id="item4" className="step-form-div mt-2">
                   {Object.entries(userData).map(([key, value]) => {
                     return (
@@ -241,34 +142,38 @@ const Onboarding = () => {
         </div>
       </form>
       <div className="flex justify-center w-full py-3 gap-2">
-        <a
-          href="#item1"
-          className={`btn btn-xs ${isFirstStepDone() && "bg-green-500"}`}
+        <div
+          className={`btn btn-xs ${step >= 2 && "bg-green-500"}`}
+          onClick={() => {
+            setStep(1);
+          }}
         >
           1
-        </a>
-        <a
-          href={`${isFirstStepDone() ? "#item2" : "#item1"}`}
-          className={`btn btn-xs ${isSecondStepDone() && "bg-green-500"}`}
-          disabled={isFirstStepDone() ? "" : "disabled"}
+        </div>
+        <div
+          onClick={() => {
+            if (step > 1) setStep(2);
+          }}
+          className={`btn btn-xs ${step >= 3 && "bg-green-500"}`}
         >
           2
-        </a>
-        <a
-          href={`${isSecondStepDone() ? "#item3" : "#item2"}`}
-          className={`btn btn-xs ${isThirdStepDone() && "bg-green-500"}`}
-          disabled={isSecondStepDone() ? "" : "disabled"}
+        </div>
+        <div
+          onClick={() => {
+            if (step > 2) setStep(3);
+          }}
+          className={`btn btn-xs ${step >= 4 && "bg-green-500"}`}
         >
           3
-        </a>
-        <a
-          href={`${isThirdStepDone() ? "#item4" : "#item3"}`}
-          // href="#item4"
+        </div>
+        <div
+          onClick={() => {
+            if (step > 3) setStep(4);
+          }}
           className={`btn btn-xs ${isInfoValid() && "bg-green-500"}`}
-          disabled={isThirdStepDone() ? "" : "disabled"}
         >
           4
-        </a>
+        </div>
       </div>
     </>
   );
